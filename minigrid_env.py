@@ -154,11 +154,9 @@ class MiniGridEnv(gym.Env):
             if self.task == 'easykeygoal' or self.task == 'easykeydoor':
                 self.carrying = self.keyEasy
                 self.carrying.cur_pos = np.array([-1, -1])
-                print(self.carrying)
             if self.task == 'hardkeygoal' or self.task == 'doorgoal' or self.task == 'hardkeydoor':
                 self.carrying = self.keyHard
                 self.carrying.cur_pos = np.array([-1, -1])
-                print(self.carrying)
 
         # Step count since episode start
         self.step_count = 0
@@ -601,7 +599,7 @@ class MiniGridEnv(gym.Env):
                                 terminated = True
                                 reward = self._reward()
                     if self.task == 'hardkeydoor' and self.carrying:
-                        if self.name == 'keyHard':
+                        if self.carrying.name == 'keyHard':
                             if self.doorLocked.is_open:
                                 terminated = True
                                 reward = self._reward()                        
