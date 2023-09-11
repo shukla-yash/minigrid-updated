@@ -57,12 +57,13 @@ class NineRoomsEnv(MiniGridEnv):
 
     """
 
-    def __init__(self, agent_pos=None, goal_pos=None, max_steps=500, task = 'keyeasy', **kwargs):
+    def __init__(self, agent_pos=None, goal_pos=None, max_steps=500, is_gsrs = False, task = 'keyeasy', **kwargs):
         self._agent_default_pos = agent_pos
         self._goal_default_pos = goal_pos
 
         self.size = 13
         self.task = task
+        self.is_gsrs = is_gsrs
         print("task is: ", self.task)
         mission_space = MissionSpace(mission_func=self._gen_mission)
 
@@ -71,6 +72,7 @@ class NineRoomsEnv(MiniGridEnv):
             width=self.size,
             height=self.size,
             max_steps=max_steps,
+            is_gsrs = self.is_gsrs,
             **kwargs,
         )
 
@@ -120,7 +122,7 @@ class NineRoomsEnv(MiniGridEnv):
                     pos = (xR, self._rand_int(yT + 1, yB))
                     self.grid.set(*pos, None)
 
-        if self.task =='easykey' or self.task == 'hardkey' or self.task == 'keygoal':
+        if self.task =='easykey' or self.task == 'hardkey' or self.task == 'keygoal' or self.task == 'easy-key-door' or self.task == 'easy-key-goal' or self.task == 'hard-key-door' or self.task == 'hard-key-goal':
             agent_x = np.random.randint(low = 1, high = room_w-1)
             agent_y = np.random.randint(low = self.size - room_h, high = self.size-2)
             self._agent_default_pos = (agent_x, agent_y)
@@ -169,7 +171,7 @@ class NineRoomsEnv(MiniGridEnv):
         # Place a yellow key on the left side
         self.keyHard = Key("yellow", 'keyHard')
         self.keyEasy = Key("yellow", 'keyEasy')
-        if self.task =='easykey' or self.task == 'hardkey' or self.task == 'keygoal':
+        if self.task =='easykey' or self.task == 'hardkey' or self.task == 'keygoal' or self.task == 'easy-key-door' or self.task == 'easy-key-goal' or self.task == 'hard-key-door' or self.task == 'hard-key-goal':
             self.place_obj(obj=self.keyHard, top=(0, 0), size=(room_h, room_w-1))        
             self.place_obj(obj=self.keyEasy, top=(self.size-room_h, self.size-room_w), size=(room_h, room_w))        
         elif self.task == 'easykeygoal' or self.task == 'easykeydoor':

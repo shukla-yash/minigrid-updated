@@ -58,10 +58,11 @@ class MiniGridEnv(gym.Env):
         highlight: bool = True,
         tile_size: int = TILE_PIXELS,
         agent_pov: bool = False,
+        is_gsrs: bool = False
     ):
         # Initialize mission
         self.mission = mission_space.sample()
-
+        self.is_gsrs = is_gsrs
         # Can't set both grid_size and width/height
         if grid_size:
             assert width is None and height is None
@@ -154,9 +155,11 @@ class MiniGridEnv(gym.Env):
             if self.task == 'easykeygoal' or self.task == 'easykeydoor':
                 self.carrying = self.keyEasy
                 self.carrying.cur_pos = np.array([-1, -1])
+                print(self.carrying)
             if self.task == 'hardkeygoal' or self.task == 'doorgoal' or self.task == 'hardkeydoor':
                 self.carrying = self.keyHard
                 self.carrying.cur_pos = np.array([-1, -1])
+                print(self.carrying)
 
         # Step count since episode start
         self.step_count = 0
@@ -167,6 +170,8 @@ class MiniGridEnv(gym.Env):
         # Return first observation
         obs = self.gen_obs()
 
+        # For QRM baselines: 0 - initial state; 1 - got easy key; 2 - got hard key; 3 - opened door; 4 - reached goal
+        self.current_reward_machine_state = 0
         return obs, {}
 
     def hash(self, size=16):
@@ -559,8 +564,18 @@ class MiniGridEnv(gym.Env):
                 reward = self._reward()
             if fwd_cell is not None and fwd_cell.type == "goal" and self.mission == 'ninerooms':
                 if self.task == 'keygoal' or self.task == 'doorgoal' or self.task == 'easykeygoal' or self.task == 'hardkeygoal':
+                    self.current_reward_machine_state = 4
+                    # print("Current machine state: ", self.current_reward_machine_state)                    
                     terminated = True
-                    reward = self._reward()                    
+                    reward = self._reward()
+                if self.task == 'easy-key-goal' and self.carrying:
+                    if self.carrying.name == 'keyEasy':
+                        terminated = True
+                        reward = self._reward()                        
+                if self.task == 'hard-key-goal' and self.carrying:
+                    if self.carrying.name == 'keyHard':
+                        terminated = True
+                        reward = self._reward()                                                
             if fwd_cell is not None and fwd_cell.type == "lava":
                 terminated = True
 
@@ -572,6 +587,8 @@ class MiniGridEnv(gym.Env):
                     self.carrying.cur_pos = np.array([-1, -1])
                     self.grid.set(fwd_pos[0], fwd_pos[1], None)
                     if self.mission == 'ninerooms':
+                        if self.is_gsrs:
+                            reward = 0.3
                         if self.task == 'easykey':
                             if self.carrying.name == 'keyEasy':
                                 terminated = True
@@ -580,7 +597,13 @@ class MiniGridEnv(gym.Env):
                             if self.carrying.name == 'keyHard':
                                 terminated = True
                                 reward = self._reward()
-                            
+                    if self.carrying.name == 'keyEasy':
+                        self.current_reward_machine_state = 1
+                        # print("Current machine state: ", self.current_reward_machine_state)
+                    if self.carrying.name == 'keyHard':
+                        self.current_reward_machine_state = 2                            
+                        # print("Current machine state: ", self.current_reward_machine_state)
+
         # Drop an object
         elif action == self.actions.drop:
             if not fwd_cell and self.carrying:
@@ -593,12 +616,17 @@ class MiniGridEnv(gym.Env):
             if fwd_cell:
                 fwd_cell.toggle(self, fwd_pos)
                 if self.mission == 'ninerooms':
-                    if self.task == 'easykeydoor' and self.carrying:
+                    if self.carrying:
+                        self.current_reward_machine_state = 3
+                        if self.is_gsrs:
+                            reward = 0.6                            
+                        # print("Current machine state: ", self.current_reward_machine_state)                        
+                    if (self.task == 'easykeydoor' and self.carrying) or (self.task == 'easy-key-door' and self.carrying):
                         if self.carrying.name == 'keyEasy':
                             if self.doorLocked.is_open:
                                 terminated = True
                                 reward = self._reward()
-                    if self.task == 'hardkeydoor' and self.carrying:
+                    if self.task == 'hardkeydoor' and self.carrying or (self.task == 'hard-key-door' and self.carrying):
                         if self.carrying.name == 'keyHard':
                             if self.doorLocked.is_open:
                                 terminated = True
@@ -691,6 +719,9 @@ class MiniGridEnv(gym.Env):
         )
 
         return img
+
+    def return_current_reward_machine_state(self):
+        return self.current_reward_machine_state
 
     def get_full_render(self, highlight, tile_size):
         """
