@@ -172,12 +172,12 @@ class NineRoomsEnv(MiniGridEnv):
         # Place a yellow key on the left side
         self.keyHard = Key("yellow", 'keyHard')
         self.keyEasy = Key("yellow", 'keyEasy')
-        if self.task =='easykey' or self.task == 'hardkey' or self.task == 'keygoal':
+        if self.task =='room2easykey' or self.task == 'room2hardkey' or self.task == 'room2goal':
             self.place_obj(obj=self.keyHard, top=(0, 0), size=(room_h, room_w-1))        
             self.place_obj(obj=self.keyEasy, top=(self.size-room_h, self.size-room_w), size=(room_h, room_w))        
-        elif self.task == 'easykeygoal' or self.task == 'easykeydoor':
+        elif self.task == 'easykey2goal' or self.task == 'easykey2door' or self.task == 'easykey2hardkey' or self.task == 'easykey2room':
             self.place_obj(obj=self.keyHard, top=(0, 0), size=(room_h, room_w-1))        
-        elif self.task == 'hardkeygoal' or self.task == 'hardkeydoor':
+        elif self.task == 'hardkey2goal' or self.task == 'hardkey2door' or self.task == 'hardkey2easykey' or self.task == 'hardkey2goal':
             self.place_obj(obj=self.keyEasy, top=(self.size-room_h, self.size-room_w), size=(room_h, room_w))        
 
         self.obstacle_type = Lava
