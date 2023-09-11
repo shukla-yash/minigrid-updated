@@ -151,11 +151,10 @@ class MiniGridEnv(gym.Env):
         # Item picked up, being carried, initially nothing
         self.carrying = None
         if self.mission == 'ninerooms':
-            # print(self.task)
-            if self.task == 'easykey2goal' or self.task == 'easykey2door' or self.task == 'easykey2hardkey' or self.task == 'easykey2room':
+            if self.task == 'easykeygoal' or self.task == 'easykeydoor':
                 self.carrying = self.keyEasy
                 self.carrying.cur_pos = np.array([-1, -1])
-            if self.task == 'hardkey2goal' or self.task == 'door2goal' or self.task == 'hardkey2door' or self.task == 'hardkey2easykey' or self.task == 'hardkey2room':
+            if self.task == 'hardkeygoal' or self.task == 'doorgoal' or self.task == 'hardkeydoor':
                 self.carrying = self.keyHard
                 self.carrying.cur_pos = np.array([-1, -1])
 
@@ -538,12 +537,6 @@ class MiniGridEnv(gym.Env):
         # Get the position in front of the agent
         fwd_pos = self.front_pos
 
-        # TODO: Check whether is in Room 1
-        is_fwd_rm = False 
-        if self.mission == 'ninerooms':
-            room_w, room_h = self.width // 3, self.height // 3 
-            is_fwd_rm = self.front_pos[0] >= 1 and self.front_pos[0] < room_w -1 and self.front_pos[1] >= 13 - room_h and self.front_pos[1] < 11
-
         # Get the contents of the cell in front of the agent
         fwd_cell = self.grid.get(*fwd_pos)
 
@@ -565,15 +558,11 @@ class MiniGridEnv(gym.Env):
                 terminated = True
                 reward = self._reward()
             if fwd_cell is not None and fwd_cell.type == "goal" and self.mission == 'ninerooms':
-                if self.task == 'room2goal' or self.task == 'door2goal' or self.task == 'easykey2goal' or self.task == 'hardkey2goal':
+                if self.task == 'keygoal' or self.task == 'doorgoal' or self.task == 'easykeygoal' or self.task == 'hardkeygoal':
                     terminated = True
                     reward = self._reward()                    
             if fwd_cell is not None and fwd_cell.type == "lava":
                 terminated = True
-            if fwd_cell is None and is_fwd_rm:
-                if self.task == 'easykey2room' or self.task == 'hardkey2room' or self.task == 'door2room':
-                    terminated = True 
-                    reward = self._reward()
 
         # Pick up an object
         elif action == self.actions.pickup:
@@ -583,11 +572,11 @@ class MiniGridEnv(gym.Env):
                     self.carrying.cur_pos = np.array([-1, -1])
                     self.grid.set(fwd_pos[0], fwd_pos[1], None)
                     if self.mission == 'ninerooms':
-                        if self.task == 'room2easykey' or self.task == 'hardkey2easykey' or self.task == 'door2easykey':
+                        if self.task == 'easykey':
                             if self.carrying.name == 'keyEasy':
                                 terminated = True
                                 reward = self._reward()
-                        if self.task == 'room2hardkey' or self.task == 'easykey2hardkey' or self.task == 'door2hardkey':
+                        if self.task == 'hardkey':
                             if self.carrying.name == 'keyHard':
                                 terminated = True
                                 reward = self._reward()
@@ -604,7 +593,7 @@ class MiniGridEnv(gym.Env):
             if fwd_cell:
                 fwd_cell.toggle(self, fwd_pos)
                 if self.mission == 'ninerooms':
-                    if (self.task == 'easykey2door' or self.task == 'room2door' or self.task == 'hardkey2door') and self.carrying:
+                    if self.task == 'easykeydoor' and self.carrying:
                         if self.carrying.name == 'keyEasy':
                             if self.doorLocked.is_open:
                                 terminated = True
