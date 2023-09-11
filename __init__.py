@@ -211,48 +211,93 @@ def register_minigrid_envs():
         id="MiniGrid-FourRooms-v0",
         entry_point="minigrid.envs:FourRoomsEnv",
     )
+
+    # NineRooms
+    ###########################################
     register(
-        id="MiniGrid-NineRoomsEasyKey-v0",
+        id="MiniGrid-NineRooms-Room2EasyKey-v0",
         entry_point="minigrid.envs:NineRoomsEnv",
-        kwargs={"task": 'easykey'},
+        kwargs={"task": 'room2easykey'},
+    )
+    register(
+        id="MiniGrid-NineRooms-Room2HardKey-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'room2hardkey'},
+    )
+    register(
+        id="MiniGrid-NineRooms-Room2Door-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'room2door'},
+    )
+    register(
+        id="MiniGrid-NineRooms-Room2Goal-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'room2goal'},
     )
     
     register(
-        id="MiniGrid-NineRoomsHardKey-v0",
+        id="MiniGrid-NineRooms-EasyKey2Room-v0",
         entry_point="minigrid.envs:NineRoomsEnv",
-        kwargs={"task": 'hardkey'},
+        kwargs={"task": 'easykey2room'},
     )
     register(
-        id="MiniGrid-NineRoomsEasyKeyGoal-v0",
+        id="MiniGrid-NineRooms-EasyKey2HardKey-v0",
         entry_point="minigrid.envs:NineRoomsEnv",
-        kwargs={"task": 'easykeygoal'},
+        kwargs={"task": 'easykey2hardkey'},
     )
     register(
-        id="MiniGrid-NineRoomsHardKeyGoal-v0",
+        id="MiniGrid-NineRooms-EasyKey2Door-v0",
         entry_point="minigrid.envs:NineRoomsEnv",
-        kwargs={"task": 'hardkeygoal'},
+        kwargs={"task": 'easykey2door'},
     )
     register(
-        id="MiniGrid-NineRoomsKeyEasyDoor-v0",
+        id="MiniGrid-NineRooms-EasyKey2Goal-v0",
         entry_point="minigrid.envs:NineRoomsEnv",
-        kwargs={"task": 'easykeydoor'},
-    )
-    register(
-        id="MiniGrid-NineRoomsKeyHardDoor-v0",
-        entry_point="minigrid.envs:NineRoomsEnv",
-        kwargs={"task": 'hardkeydoor'},
-    )    
-    register(
-        id="MiniGrid-NineRoomsDoorGoal-v0",
-        entry_point="minigrid.envs:NineRoomsEnv",
-        kwargs={"task": 'doorgoal'},
+        kwargs={"task": 'easykey2goal'},
     )
 
     register(
-        id="MiniGrid-NineRoomsKeyGoal-v0",
+        id="MiniGrid-NineRooms-HardKey2Room-v0",
         entry_point="minigrid.envs:NineRoomsEnv",
-        kwargs={"task": 'keygoal'},
+        kwargs={"task": 'hardkey2room'},
     )
+    register(
+        id="MiniGrid-NineRooms-HardKey2EasyKey-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'hardkey2easykey'},
+    )
+    register(
+        id="MiniGrid-NineRooms-HardKey2Door-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'hardkey2door'},
+    )
+    register(
+        id="MiniGrid-NineRooms-HardKey2Goal-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'hardkey2goal'},
+    )
+
+    register(
+        id="MiniGrid-NineRooms-Door2Room-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'door2room'},
+    )
+    register(
+        id="MiniGrid-NineRooms-Door2EasyKey-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'door2easykey'},
+    )
+    register(
+        id="MiniGrid-NineRooms-Door2HardKey-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'door2hardkey'},
+    )
+    register(
+        id="MiniGrid-NineRooms-Door2Goal-v0",
+        entry_point="minigrid.envs:NineRoomsEnv",
+        kwargs={"task": 'door2goal'},
+    )
+
 
 
     # GoToDoor
