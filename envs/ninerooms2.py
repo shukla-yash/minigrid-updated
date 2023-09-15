@@ -57,14 +57,13 @@ class NineRoomsEnv(MiniGridEnv):
 
     """
 
-    def __init__(self, agent_pos=None, goal_pos=None, max_steps=500, is_gsrs = False, task = 'keyeasy', **kwargs):
+    def __init__(self, agent_pos=None, goal_pos=None, max_steps=500, task = 'room2easykey', **kwargs):
         self._agent_default_pos = agent_pos
         self._goal_default_pos = goal_pos
 
         self.size = 13
         self.task = task
-        self.is_gsrs = is_gsrs
-        print("task is: ", self.task)
+        # print("task is: ", self.task)
         mission_space = MissionSpace(mission_func=self._gen_mission)
 
         super().__init__(
@@ -72,7 +71,6 @@ class NineRoomsEnv(MiniGridEnv):
             width=self.size,
             height=self.size,
             max_steps=max_steps,
-            is_gsrs = self.is_gsrs,
             **kwargs,
         )
 
@@ -121,20 +119,23 @@ class NineRoomsEnv(MiniGridEnv):
                 if (i == 1 and j == 0) or (i == 1 and j == 1) or (i == 0 and j == 2) or (i == 1 and j == 2):
                     pos = (xR, self._rand_int(yT + 1, yB))
                     self.grid.set(*pos, None)
-
-        if self.task =='easykey' or self.task == 'hardkey' or self.task == 'keygoal' or self.task == 'easy-key-door' or self.task == 'easy-key-goal' or self.task == 'hard-key-door' or self.task == 'hard-key-goal':
+        # Start from room 1
+        if self.task =='room2easykey' or self.task == 'room2hardkey' or self.task == 'room2goal' or self.task == 'room2door':
             agent_x = np.random.randint(low = 1, high = room_w-1)
             agent_y = np.random.randint(low = self.size - room_h, high = self.size-2)
             self._agent_default_pos = (agent_x, agent_y)
-        elif self.task == 'easykeygoal' or self.task == 'easykeydoor' :
+        # Start from easy key
+        elif self.task == 'easykey2goal' or self.task == 'easykey2door' or self.task == 'easykey2hardkey' or self.task == 'easykey2room':
             agent_x = np.random.randint(low = self.size-room_h, high = self.size-2)
             agent_y = np.random.randint(low = self.size -room_w, high = self.size-2)
             self._agent_default_pos = (agent_x, agent_y)
-        elif self.task == 'hardkeygoal' or self.task == 'hardkeydoor':
+        # Start from hard key
+        elif self.task == 'hardkey2goal' or self.task == 'hardkey2door' or self.task == 'hardkey2easykey' or self.task == 'hardkey2room':
             agent_x = np.random.randint(low = 1, high = room_w-1)
             agent_y = np.random.randint(low = 1, high = room_h-1)
             self._agent_default_pos = (agent_x, agent_y)
-        elif self.task == 'doorgoal':
+        # Start from door
+        elif self.task == 'door2goal' or self.task == 'door2room' or self.task == 'door2easykey' or self.task == 'door2hardkey':
             agent_x = np.random.randint(low = room_w + 1, high = self.size - room_w - 2)
             agent_y = np.random.randint(low = 1, high = room_h-1)
             self._agent_default_pos = (agent_x, agent_y)
@@ -163,7 +164,7 @@ class NineRoomsEnv(MiniGridEnv):
         # doorIdx = self._rand_int(1, width - 2)
         self.doorLocked = Door("yellow", is_locked=True)
         self.doorUnlocked = Door("yellow", is_open=True) 
-        if self.task == 'doorgoal':
+        if self.task == 'door2goal' or self.task == 'door2hardkey' or self.task == 'door2easykey' or self.task == 'door2room':
             self.put_obj(self.doorUnlocked, doorpos[0], doorpos[1])
         else:
             self.put_obj(self.doorLocked, doorpos[0], doorpos[1])
@@ -171,12 +172,12 @@ class NineRoomsEnv(MiniGridEnv):
         # Place a yellow key on the left side
         self.keyHard = Key("yellow", 'keyHard')
         self.keyEasy = Key("yellow", 'keyEasy')
-        if self.task =='easykey' or self.task == 'hardkey' or self.task == 'keygoal' or self.task == 'easy-key-door' or self.task == 'easy-key-goal' or self.task == 'hard-key-door' or self.task == 'hard-key-goal':
+        if self.task =='room2easykey' or self.task == 'room2hardkey' or self.task == 'room2goal':
             self.place_obj(obj=self.keyHard, top=(0, 0), size=(room_h, room_w-1))        
             self.place_obj(obj=self.keyEasy, top=(self.size-room_h, self.size-room_w), size=(room_h, room_w))        
-        elif self.task == 'easykeygoal' or self.task == 'easykeydoor':
+        elif self.task == 'easykey2goal' or self.task == 'easykey2door' or self.task == 'easykey2hardkey' or self.task == 'easykey2room':
             self.place_obj(obj=self.keyHard, top=(0, 0), size=(room_h, room_w-1))        
-        elif self.task == 'hardkeygoal' or self.task == 'hardkeydoor':
+        elif self.task == 'hardkey2goal' or self.task == 'hardkey2door' or self.task == 'hardkey2easykey' or self.task == 'hardkey2goal':
             self.place_obj(obj=self.keyEasy, top=(self.size-room_h, self.size-room_w), size=(room_h, room_w))        
 
         self.obstacle_type = Lava
