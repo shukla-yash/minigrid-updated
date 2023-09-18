@@ -609,7 +609,7 @@ class MiniGridEnv(gym.Env):
                             if self.doorLocked.is_open:
                                 terminated = True
                                 reward = self._reward()
-                    if self.task == 'hardkeydoor' and self.carrying:
+                    if (self.task == 'hardkey2door' or self.task == 'room2door' or self.task == 'easykey2door') and self.carrying:
                         if self.carrying.name == 'keyHard':
                             if self.doorLocked.is_open:
                                 terminated = True
